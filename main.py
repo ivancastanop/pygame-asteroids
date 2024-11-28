@@ -1,6 +1,8 @@
 import pygame
 from constants import *
 from player import *
+from asteroid import *
+from asteroidfield import *
 
 
 def main():
@@ -11,14 +13,27 @@ def main():
     print("Starting asteroids!")
     # print(f"Screen width: {SCREEN_WIDTH}")
     # print(f"Screen height: {SCREEN_HEIGHT}")
+    updatable = pygame.sprite.Group()
+    drawable = pygame.sprite.Group()
+    asteroids_group = pygame.sprite.Group()
+    Player.containers = (updatable, drawable)
+    Asteroid.containers = (asteroids_group, updatable, drawable)
+    AsteroidField.containers = updatable
+    asteroids_field = AsteroidField()
     player_avatar = Player(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2)
 
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 return
+
+        for uptodate in updatable:
+            uptodate.update(dt)
         pygame.Surface.fill(screen, (0, 0, 0))
-        player_avatar.draw(screen)
+
+        for drawing in drawable:
+            drawing.draw(screen)
+
         pygame.display.flip()
         time_lapse = clock.tick(60)
         dt = time_lapse / 1000
